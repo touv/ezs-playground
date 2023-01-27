@@ -70,7 +70,7 @@ indent = true
       <div className="App">
         <Header as='h2' icon textAlign='center'>
           <img src="https://inist-cnrs.github.io/ezs/_media/icon.svg" className="App-logo" alt="logo" />
-          <Header.Content>EZS Playground</Header.Content>
+            <Header.Content><a href="https://inist-cnrs.github.io/ezs/#/">EZS</a> Playground</Header.Content>
         </Header>
         <Form onSubmit={this.handleSubmit}>
           <Grid>
@@ -112,7 +112,7 @@ indent = true
               <Grid.Column>
                 <Segment padded>
                   <br />
-                  <TextArea                
+                  <TextArea
                     rows='20'
                     value={this.state.output}
                   />
