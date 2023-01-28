@@ -3,15 +3,15 @@ import { Grid } from 'semantic-ui-react';
 import { Form, TextArea } from 'semantic-ui-react';
 import { Button, Segment, Label } from 'semantic-ui-react'
 import { Header } from 'semantic-ui-react';
+import AceEditor from "react-ace";
+
+import "ace-builds/src-noconflict/mode-ini";
+import "ace-builds/src-noconflict/theme-github";
 
 import './App.css';
 
-class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      input: '[{ "value": 1 }, {"value":2}]',
-      script: `# EZS script
+const defaultInput = '[{ "value": 1 }, {"value":2}]';
+const defaultScript = `# EZS script
 [use]
 plugin = basics
 
@@ -26,29 +26,34 @@ path = label
 value = static value
 
 [debug]
-text = avant génération d'un identifiant
+text = before generating an identifier per object
 
 [identify]
 
 [dump]
 indent = true
-      `,
+  `;
+
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      input: '',
+      script: '',
       output: '',
       log: '',
     };
-    this.handleChange = this.handleChange.bind(this);
+    this.handleChangeInput = this.handleChangeInput.bind(this);
+    this.handleChangeScript = this.handleChangeScript.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleChange(event) {
-    const { name, value } = event.target;
-    console.log({ name, value });
-    if (name === 'input') {
-      this.setState({ input: value });
-    }
-    if (name === 'script') {
+  handleChangeInput(event) {
+    const { value } = event.target;
+    this.setState({ input: value });
+  }
+  handleChangeScript(value) {
       this.setState({ script: value });
-    }
   }
 
   handleSubmit(event) {
@@ -81,9 +86,10 @@ indent = true
                   <TextArea
                     name='input'
                     placeholder='input'
+                    height="360px"
                     rows='20'
-                    value={this.state.input}
-                    onChange={this.handleChange}
+                    value={defaultInput}
+                    onChange={this.handleChangeInput}
                   />
                   <Label
                     attached='top right'
@@ -92,13 +98,16 @@ indent = true
               </Grid.Column>
               <Grid.Column>
                 <Segment attached>
-                  <br />
-                  <TextArea
-                    name='script'
-                    placeholder='script'
-                    rows='20'
-                    value={this.state.script}
-                    onChange={this.handleChange}
+                  <AceEditor
+                    mode="ini"
+                    theme="github"
+                    height="360px"
+                    defaultValue={defaultScript}
+                    onChange={this.handleChangeScript}
+                    name="script-input"
+                    enableBasicAutocompletion={false}
+                    enableLiveAutocompletion={false}
+                    enableSnippets={false}
                   />
                   <Label
                     attached='top right'
