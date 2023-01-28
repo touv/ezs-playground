@@ -38,8 +38,8 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      input: '',
-      script: '',
+      input: defaultInput,
+      script: defaultScript,
       output: '',
       log: '',
     };
@@ -58,7 +58,6 @@ class App extends Component {
 
   handleSubmit(event) {
     event.preventDefault();
-
     const { input, script } = this.state;
     const requestOptions = {
       method: 'PUT',
@@ -88,7 +87,7 @@ class App extends Component {
                     placeholder='input'
                     height="360px"
                     rows='20'
-                    value={defaultInput}
+                    value={this.state.input}
                     onChange={this.handleChangeInput}
                   />
                   <Label

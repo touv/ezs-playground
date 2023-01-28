@@ -8,12 +8,11 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const formatError = (e) => {
-  console.log(e);
   const prefix = '⚠️ ERROR 👇\n\n';
-  if (e.message.search(/:1>/)) { // evalmachine error
+  if (e.message.search(/:1>/) !== -1) { // evalmachine error
     return prefix.concat(e.message.split(/\n\s+\n/).shift());
   }
-  return prefix.concat(e.message.split('\n')).shift()
+  return prefix.concat(e.message.split('\n').shift());
 }
 
 const runEzs = (input, script) => new Promise((resolve) => {
