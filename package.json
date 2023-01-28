@@ -26,7 +26,8 @@
 		"app:eject": "react-scripts eject",
 		"api:start": "node-env-run server/index.mjs --exec nodemon",
 		"dev": "run-p api:start app:start",
-		"prod": "PORT=3000 node-env-run server/index.mjs"
+		"prod": "PORT=3000 node-env-run server/index.mjs",
+		"postversion": "git push && git push --tags"
 	},
 	"proxy": "http://localhost:3001",
 	"eslintConfig": {
