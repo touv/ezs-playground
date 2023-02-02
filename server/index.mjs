@@ -27,7 +27,7 @@ const runEzs = (input, script) => new Promise((resolve) => {
       .on('error', (e) => resolve(formatError(e)))
       .on('data', (d) => output.push(d))
       .on('end', () => resolve(output.join('\n')));
-    stream.write(input);
+    stream.write(input || '');
     stream.end();
   }
   catch(e) {
@@ -67,6 +67,10 @@ app.put('/', (req, res, next) => {
   runEzsAndCaptureLog(input, script)
     .then(({ output, log}) => res.json({ output, log }))
     .catch(next);
+});
+app.use((err, req, res, next) => {
+  res.status(500)
+  res.send(formatError(err));
 });
 
 app.listen(process.env.PORT || 3001, () =>
