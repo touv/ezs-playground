@@ -45,6 +45,7 @@ class App extends Component {
     };
     this.handleChangeInput = this.handleChangeInput.bind(this);
     this.handleChangeScript = this.handleChangeScript.bind(this);
+    this.handleClear = this.handleClear.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
@@ -56,6 +57,16 @@ class App extends Component {
       this.setState({ script: value });
   }
 
+  handleClear(event) {
+    event.preventDefault();
+    this.setState({
+      input: '',
+      script: '',
+      output: '',
+      log: '',
+    });
+  }
+
   handleSubmit(event) {
     event.preventDefault();
     const { input, script } = this.state;
@@ -65,8 +76,15 @@ class App extends Component {
       body: JSON.stringify({ input, script })
     };
     fetch('/', requestOptions)
-      .then(response => response.json())
-      .then(({ output, log }) => this.setState({ output, log }));
+      .then(async (response) => {
+        if (response.ok) {
+          return response.json();
+        }
+        const errorMessage = await response.text();
+        throw new Error(errorMessage);
+      })
+      .then(({ output, log }) => this.setState({ output, log }))
+      .catch((e) => this.setState({ output: e.message}));
   }
 
   render() {
@@ -84,7 +102,7 @@ class App extends Component {
                   <br />
                   <TextArea
                     name='input'
-                    placeholder='input'
+                    placeholder='Input data'
                     height="360px"
                     rows='20'
                     value={this.state.input}
@@ -96,7 +114,7 @@ class App extends Component {
                 </Segment>
               </Grid.Column>
               <Grid.Column>
-                <Segment attached>
+                <Segment>
                   <AceEditor
                     mode="ini"
                     theme="github"
@@ -111,16 +129,26 @@ class App extends Component {
                   <Label
                     attached='top right'
                   >Script</Label>
-                </Segment>
+                      </Segment>
                 <Button
-                  attached='bottom'
+                  secondary
+                  size='medium'
+                  floated='left'
+                  onClick={this.handleClear}
+                >Clear</Button>
+                <Button
+                  primary
+                  size='medium'
+                  floated='right'
                   onClick={this.handleSubmit}
-                >Click here</Button>
+                >Execute</Button>
               </Grid.Column>
               <Grid.Column>
                 <Segment padded>
                   <br />
                   <TextArea
+                    name='output'
+                    placeholder='Transformed data'
                     rows='20'
                     value={this.state.output}
                   />
