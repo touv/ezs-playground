@@ -12,8 +12,6 @@ import "ace-builds/src-noconflict/theme-github";
 
 import './App.css';
 
-const buildURL = ({ input, script }) => `?x=${base64.encode(JSON.stringify({input, script}))}`;
-
 const defaultInput = '[{ "value": 1 }, {"value":2}]';
 const defaultScript = `# EZS script
 [use]
@@ -39,43 +37,55 @@ indent = true
   `;
 
 
+function isBase64(str) {
+    if (str ==='' || str.trim() ===''){ return false; }
+    try {
+        return btoa(atob(str)) == str;
+    } catch (err) {
+        return false;
+    }
+}
+
 class App extends Component {
   constructor(props) {
     super(props);
     const { x:x64 } = queryString.parse(window.location.search);
-    const x = String(x64).search(/=$/) !== -1  ? base64.decode(x64) : '';
+    const x = isBase64(x64) ? base64.decode(x64) : '';
     const { input='', script='' } = x ? JSON.parse(x) : {};
     this.initialInput =  input || defaultInput;
     this.initialScript = script || defaultScript;
 
-    console.log({ input, script });
     this.state = {
       input: this.initialInput,
       script: this.initialScript,
-      saveURL: '',
       output: '',
       log: '',
       cursor: 'pointer',
     };
-    this.state.saveURL = buildURL(this.state);
     this.handleChangeInput = this.handleChangeInput.bind(this);
     this.handleChangeScript = this.handleChangeScript.bind(this);
     this.handleClear = this.handleClear.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleSaveURL = this.handleSaveURL.bind(this);
   }
 
   handleChangeInput(event) {
     const { value } = event.target;
     this.setState({
       input: value,
-      saveURL: buildURL({ input: value, script: this.state.script })
     });
   }
   handleChangeScript(value) {
     this.setState({
       script: value,
-      saveURL: buildURL({ input:  this.state.input, script: value })
     });
+  }
+
+  handleSaveURL(event) {
+    event.preventDefault();
+    const { input, script } = this.state;
+    const x = base64.encode(JSON.stringify({input, script}));
+    window.location.search = `?x=${x}`;
   }
 
   handleClear(event) {
@@ -85,7 +95,6 @@ class App extends Component {
       script: '',
       output: '',
       log: '',
-      saveURL: '#',
     });
   }
 
@@ -162,10 +171,11 @@ class App extends Component {
                   floated='left'
                   onClick={this.handleClear}
                 >Clear I/O</Button>
-                <a
-                  class="ui button"
-                  href={this.state.saveURL}
-                >Save as URL</a>
+                <Button
+                  size='medium'
+                  floated='left'
+                  onClick={this.handleSaveURL}
+                >Save as URL</Button>
                 <Button
                   primary
                   size='medium'
