@@ -50,7 +50,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     const { x:x64 } = queryString.parse(window.location.search);
-    const x = isBase64(x64) ? base64.decode(x64) : '';
+    const x = isBase64(String(x64)) ? base64.decode(x64) : '';
     const { input='', script='' } = x ? JSON.parse(x) : {};
     this.initialInput =  input || defaultInput;
     this.initialScript = script || defaultScript;
