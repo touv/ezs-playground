@@ -1,6 +1,6 @@
 {
 	"name": "ezs-playground",
-	"version": "1.2.0",
+	"version": "1.2.1",
 	"private": true,
 	"dependencies": {
 		"@ezs/analytics": "^2.0.15",
