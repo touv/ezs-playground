@@ -52,9 +52,12 @@ class App extends Component {
     this.state = {
       input: this.initialInput,
       script: this.initialScript,
+      saveURL: '',
       output: '',
       log: '',
+      cursor: 'pointer',
     };
+    this.state.saveURL = buildURL(this.state);
     this.handleChangeInput = this.handleChangeInput.bind(this);
     this.handleChangeScript = this.handleChangeScript.bind(this);
     this.handleClear = this.handleClear.bind(this);
@@ -63,10 +66,16 @@ class App extends Component {
 
   handleChangeInput(event) {
     const { value } = event.target;
-    this.setState({ input: value });
+    this.setState({
+      input: value,
+      saveURL: buildURL({ input: value, script: this.state.script })
+    });
   }
   handleChangeScript(value) {
-      this.setState({ script: value });
+    this.setState({
+      script: value,
+      saveURL: buildURL({ input:  this.state.input, script: value })
+    });
   }
 
   handleClear(event) {
@@ -76,10 +85,15 @@ class App extends Component {
       script: '',
       output: '',
       log: '',
+      saveURL: '#',
     });
   }
 
   handleSubmit(event) {
+    this.setState({
+      cursor: 'progress',
+    });
+
     event.preventDefault();
     const { input, script } = this.state;
     const requestOptions = {
@@ -95,7 +109,7 @@ class App extends Component {
         const errorMessage = await response.text();
         throw new Error(errorMessage);
       })
-      .then(({ output, log }) => this.setState({ output, log }))
+      .then(({ output, log }) => this.setState({ output, log, cursor: 'pointer' }))
       .catch((e) => this.setState({ output: e.message}));
   }
 
@@ -150,13 +164,14 @@ class App extends Component {
                 >Clear I/O</Button>
                 <a
                   class="ui button"
-                  href={buildURL(this.state)}
+                  href={this.state.saveURL}
                 >Save as URL</a>
                 <Button
                   primary
                   size='medium'
                   floated='right'
                   onClick={this.handleSubmit}
+                  style={{ cursor: this.state.cursor }}
                 >Execute</Button>
               </Grid.Column>
               <Grid.Column>
