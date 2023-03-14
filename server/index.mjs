@@ -26,7 +26,7 @@ const runEzs = (input, script) => new Promise((resolve) => {
       .pipe(ezs.catch())
       .on('error', (e) => resolve(formatError(e)))
       .on('data', (d) => output.push(d))
-      .on('end', () => resolve(output.join('\n')));
+      .on('end', () => resolve(output.join('')));
     stream.write(input || '');
     stream.end();
   }
