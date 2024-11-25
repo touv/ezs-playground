@@ -17,9 +17,6 @@ const defaultScript = `# EZS script
 [use]
 plugin = basics
 
-[debug]
-ezs = false
-
 [JSONParse]
 separator = *
 
