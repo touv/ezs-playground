@@ -8,6 +8,23 @@ import { createOutputInterceptor } from 'output-interceptor';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Intercepte le Ctrl+C (SIGINT)
+process.on('SIGINT', () => {
+  console.info("Interruption reçue, fermeture du serveur...");
+  server.close(() => {
+    console.info("Serveur fermé proprement.");
+    process.exit(0);
+  });
+});
+
+// Intercepte l'arrêt Docker (SIGTERM)
+process.on('SIGTERM', () => {
+  console.info("Signal de terminaison reçu, fermeture...");
+  server.close(() => {
+    process.exit(0);
+  });
+});
+
 process.env.DEBUG_COLORS = 0;
 debug.enable('ezs:*,-ezs:debug,-ezs:trace');
 
