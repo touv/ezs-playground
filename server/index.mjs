@@ -2,15 +2,19 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import express from 'express';
 import ezs from '@ezs/core';
+import debug from 'debug';
 import { createOutputInterceptor } from 'output-interceptor';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+process.env.DEBUG_COLORS = 0;
+debug.enable('ezs:*,-ezs:debug,-ezs:trace');
+
 const formatError = (e) => {
   const prefix = '⚠️ ERROR 👇\n\n';
-  if (e.message.search(/:1>/) !== -1) { // evalmachine error
-    return prefix.concat(e.message.split(/\n\s+\n/).shift());
+  if (e.message.search(/Lodash:/) !== -1) { // evalmachine error
+    return prefix.concat(e.traceback.slice(0,1));
   }
   return prefix.concat(e.message.split('\n').shift());
 }
@@ -58,9 +62,6 @@ app.get('/', function (req, res) {
   res.sendFile(publicLocation('index.html'));
 });
 
-app.get('*', (req,res) =>{
-  res.sendFile(publicLocation('index.html'));
-});
 app.put('/', (req, res, next) => {
   res.setHeader('Content-Type', 'application/json');
   const { input, script } = req.body;
